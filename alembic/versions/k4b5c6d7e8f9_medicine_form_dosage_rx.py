@@ -29,10 +29,11 @@ def upgrade() -> None:
     med_cols = _cols("medicines")
     if "dosage" not in med_cols:
         op.add_column("medicines", sa.Column("dosage", sa.String(100), nullable=True))
-    try:
+    bind = op.get_bind()
+    insp = inspect(bind)
+    existing_constraints = {c["name"] for c in insp.get_unique_constraints("medicines")}
+    if "medicines_name_key" in existing_constraints:
         op.drop_constraint("medicines_name_key", "medicines", type_="unique")
-    except Exception:
-        pass
     pi_cols = _cols("prescription_items")
     if "form" not in pi_cols:
         op.add_column("prescription_items", sa.Column("form", sa.String(30), nullable=True))

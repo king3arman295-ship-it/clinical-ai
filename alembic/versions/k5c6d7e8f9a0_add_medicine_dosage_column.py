@@ -20,10 +20,9 @@ def upgrade() -> None:
     cols = {c["name"] for c in insp.get_columns("medicines")} if "medicines" in insp.get_table_names() else set()
     if "dosage" not in cols:
         op.add_column("medicines", sa.Column("dosage", sa.String(length=100), nullable=True))
-    try:
+    existing_constraints = {c["name"] for c in insp.get_unique_constraints("medicines")}
+    if "medicines_name_key" in existing_constraints:
         op.drop_constraint("medicines_name_key", "medicines", type_="unique")
-    except Exception:
-        pass
 
 
 def downgrade() -> None:
