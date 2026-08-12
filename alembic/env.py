@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -5,6 +6,7 @@ from sqlalchemy import pool
 
 from alembic import context
 from app.core.database import Base
+from app.core.config import DATABASE_URL
 from app.models.patient import Patient
 from app.models.clinic import Clinic
 from app.models.doctor import Doctor
@@ -46,6 +48,13 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
+
+# Override the hardcoded alembic.ini URL with the real DATABASE_URL from
+# the environment (.env locally, Railway's injected variable in prod).
+# Without this, `alembic upgrade head` always tries to connect to the
+# localhost placeholder baked into alembic.ini and fails on any real host.
+if DATABASE_URL:
+    config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
