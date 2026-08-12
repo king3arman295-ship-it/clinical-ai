@@ -15,13 +15,24 @@ const firebaseConfig = {
     measurementId: "G-YQRL5LDSKQ"
 };
 
-// Auto-detect the API host the same way config.js does
+// Reuse the same backend URL config.js already computed correctly.
+// (This used to build its own URL as `${protocol}//${hostname}:8000`,
+// which on Railway just appends :8000 to the FRONTEND's own domain —
+// not a real address, since each Railway service has its own separate
+// domain over standard HTTPS. That caused every fetch here to fail with
+// "TypeError: Failed to fetch". config.js is a plain script (not a
+// module), so it always runs before this module's top-level code does,
+// meaning window.API.config is already set by this point.)
 const API = (function () {
-    const { protocol, hostname } = window.location;
-    if (!hostname || protocol === "file:" || hostname === "localhost" || hostname === "127.0.0.1") {
+    if (window.API && window.API.config) {
+        return window.API.config;
+    }
+    // Fallback, only used if config.js somehow hasn't loaded yet.
+    const { hostname } = window.location;
+    if (!hostname || hostname === "localhost" || hostname === "127.0.0.1") {
         return "http://localhost:8000";
     }
-    return `${protocol}//${hostname}:8000`;
+    return "https://clinical-ai-production-8340.up.railway.app";
 })();
 const VAPID_KEY = "BJDSe0Sc_M5mrP82gD7b3KjN0SmGbqY87fhM36jPO8_RIeNUtqlM7bXiUO5NcO0u2gOgDXJ0SoRCKk4Yo1B2yJQ";
 
