@@ -1,0 +1,53 @@
+# Secrets & local env
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+.agents/
+
+# Runtime / local data
+*.db
+*.sqlite3
+clinic.db
+logs/
+uploads/
+*.log
+
+# Firebase private keys (keep folder structure if public config only)
+firebase/service-account.json
+**/service-account.json
+
+# Archives / build dumps
+*.zip
+clinic-ai-build/

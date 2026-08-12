@@ -1,0 +1,183 @@
+/* ============================================================
+   LUMINA HEALTH — Homepage hero
+   Loaded only on index.html, after style.css. Does not rename
+   or remove any id/class that home.js depends on (#mobileMenuBtn,
+   #navLinks, #doctorCount, #patientCount, #doctorsGrid,
+   .doctor-card and children) — visuals only.
+   ============================================================ */
+
+.hero {
+  position: relative;
+  padding: 190px 0 120px;
+  overflow: hidden;
+  background: #14170f;
+  margin-top: -1px;
+}
+
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(20,23,17,0.62) 0%, rgba(18,21,16,0.72) 55%, rgba(16,19,14,0.9) 100%),
+    radial-gradient(ellipse 900px 500px at 15% 15%, rgba(143,163,127,0.25), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 85% 30%, rgba(201,161,90,0.14), transparent 55%);
+}
+
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  z-index: 1;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0, transparent 2px),
+    radial-gradient(circle at 60% 30%, rgba(255,255,255,0.04) 0, transparent 2px),
+    radial-gradient(circle at 85% 70%, rgba(255,255,255,0.05) 0, transparent 2px);
+  background-size: 220px 220px, 260px 260px, 300px 300px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.hero .container { position: relative; z-index: 2; }
+
+.hero-content { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 60px; align-items: center; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  margin-bottom: 22px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sage-light);
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: 62px;
+  font-weight: 400;
+  line-height: 1.12;
+  margin-bottom: 24px;
+  color: #FBF9F2;
+  letter-spacing: -0.01em;
+}
+
+.hero-title .text-primary,
+.hero-title em {
+  display: block;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--sage-light);
+}
+
+.hero-description {
+  font-size: 18px;
+  color: rgba(250, 247, 239, 0.78);
+  margin-bottom: 36px;
+  line-height: 1.75;
+  max-width: 480px;
+}
+
+.hero-buttons { display: flex; gap: 16px; margin-bottom: 52px; flex-wrap: wrap; }
+
+.hero .btn-outline { border-color: rgba(250, 247, 239, 0.45); color: #FBF9F2; }
+.hero .btn-outline:hover { background: rgba(250, 247, 239, 0.12); border-color: rgba(250,247,239,0.7); color: #fff; }
+
+.hero-stats { display: flex; gap: 44px; }
+.hero-stats .stat { text-align: left; }
+.hero-stats .stat-value {
+  font-family: var(--font-serif);
+  font-size: 34px;
+  font-weight: 500;
+  color: #FBF9F2;
+  line-height: 1;
+}
+.hero-stats .stat-label {
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(250, 247, 239, 0.55);
+  margin-top: 6px;
+}
+
+/* Floating glass cards */
+.hero-image { display: flex; flex-direction: column; gap: 18px; }
+
+.hero-card {
+  background: rgba(250, 247, 239, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 26px;
+  border-radius: 18px;
+  border: 1px solid rgba(250, 247, 239, 0.16);
+  box-shadow: 0 20px 45px -20px rgba(0,0,0,0.5);
+}
+
+.hero-card .card-icon {
+  width: 46px; height: 46px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--sage);
+  color: #fff;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.hero-card .card-icon svg { width: 22px; height: 22px; }
+
+.hero-card h3 { font-family: var(--font-serif); font-size: 19px; font-weight: 600; margin-bottom: 8px; color: #fff; }
+.hero-card p { color: rgba(250, 247, 239, 0.7); font-size: 14px; line-height: 1.55; }
+
+/* ---------- Doctors / services on cream body below hero ---------- */
+body { background: var(--bg); }
+
+.section-title em { font-style: italic; color: var(--sage-dark); font-weight: 400; }
+
+/* ---------- Floating overlay nav (sits transparently over the hero image,
+   gains a solid blurred background once the page is scrolled) ---------- */
+.navbar-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  transition: background 0.35s ease, border-color 0.35s ease,
+              box-shadow 0.35s ease, backdrop-filter 0.35s ease;
+}
+
+.navbar-overlay.scrolled {
+  background: rgba(20, 23, 17, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Hero already accounts for a floating nav with its top padding, and no
+   longer needs to reserve flow space for a sticky bar above it. */
+
+/* ---------- Responsive ---------- */
+@media (max-width: 968px) {
+  .hero { padding: 150px 0 80px; }
+  .hero-content { grid-template-columns: 1fr; gap: 44px; }
+  .hero-title { font-size: 46px; }
+}
+
+@media (max-width: 640px) {
+  .hero { padding: 130px 0 64px; }
+  .hero-title { font-size: 36px; }
+  .hero-stats { flex-wrap: wrap; gap: 28px; }
+  .hero-buttons .btn { width: 100%; }
+}

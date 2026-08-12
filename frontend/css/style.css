@@ -1,0 +1,2093 @@
+/* ============================================================
+   LUMINA HEALTH — Design System
+   Shared across every page (public site + patient/doctor/admin
+   portals + login + AI assistant). Every class/id kept identical
+   to the original so js/*.js keeps working untouched — only the
+   visual language changed.
+   ============================================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* ---- Brand palette: exact tokens from design spec ---- */
+  --charcoal:      #003D2B;   /* dark forest green — sidebar */
+  --charcoal-2:     #00563E;
+  --sage:          #2D8A62;   /* success / primary interactive green */
+  --sage-dark:     #063B2B;   /* deep green — hover / emphasis */
+  --sage-light:    #6F8F82;   /* muted green */
+  --sage-pale:     #E6F0EA;   /* soft green */
+  --gold:          #C9A227;   /* accent gold */
+  --gold-bright:   #D4AF37;
+  --cream:         #F8F6EE;
+  --cream-deep:    #F6F3E8;
+  --rust:          #D94A4A;   /* danger */
+
+  /* ---- Mapped to original variable names (used throughout the app) ---- */
+  --primary:       var(--sage);
+  --primary-dark:  var(--sage-dark);
+  --primary-light: var(--sage-light);
+  --secondary:     var(--gold);
+  --success:       #2D8A62;
+  --danger:        var(--rust);
+  --warning:       #D99A28;
+  --text:          #12382B;
+  --text-light:    #64766D;
+  --bg:            var(--cream);
+  --bg-alt:        var(--cream-deep);
+  --bg-card:       #FFFFFF;
+  --border:        #E5E1D3;
+  --shadow:        0 1px 2px rgba(0, 61, 43, 0.07), 0 6px 16px -8px rgba(0, 61, 43, 0.14);
+  --shadow-lg:     0 24px 48px -20px rgba(0, 61, 43, 0.32);
+  --radius:        14px;
+
+  --font-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .section-title, .card-title, .modal-title,
+.stat-value, .stat-big, .logo-name {
+  font-family: var(--font-serif);
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ============================= NAVBAR ============================= */
+.navbar {
+  background: var(--charcoal);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--cream);
+}
+
+.logo-icon { display: none; } /* wordmark-only logo, per brand guide */
+
+.logo-text { display: flex; flex-direction: column; }
+
+.logo-name {
+  font-size: 22px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.1;
+  color: #FDFCF7;
+  letter-spacing: 0.01em;
+}
+
+.logo-name::after {
+  content: 'HEALTH';
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--sage-light);
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
+.logo-tagline {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sage-light);
+  margin-top: 2px;
+}
+
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.mobile-menu-btn span { width: 24px; height: 2px; background: var(--cream); transition: 0.3s; }
+
+.nav-links { display: flex; align-items: center; gap: 30px; }
+
+.nav-link {
+  text-decoration: none;
+  color: rgba(250, 247, 239, 0.75);
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.2s;
+}
+
+.nav-link:hover, .nav-link.active { color: var(--sage-light); }
+
+.nav-buttons { display: flex; gap: 12px; }
+
+/* ============================= BUTTONS ============================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 26px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary { background: var(--sage); color: #ffffff; }
+.btn-primary:hover { background: var(--sage-dark); transform: translateY(-1px); box-shadow: 0 8px 20px -8px rgba(6,59,43,0.55); }
+
+.btn-outline { background: transparent; color: var(--charcoal); border: 1.5px solid var(--charcoal); }
+.btn-outline:hover { background: var(--charcoal); color: var(--cream); }
+
+.btn-ghost { background: var(--bg-alt); color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--border); }
+
+.btn-danger { background: var(--rust); color: white; }
+.btn-danger:hover { background: #9c362d; }
+
+.btn-lg { padding: 15px 34px; font-size: 16px; }
+.btn-sm { padding: 7px 18px; font-size: 13px; border-radius: 999px; }
+
+/* ============================= SECTIONS ============================= */
+.section { padding: 96px 0; }
+.section-alt { background: var(--bg-alt); }
+
+.section-header { text-align: center; margin-bottom: 56px; }
+
+.section-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sage-dark);
+  margin-bottom: 12px;
+}
+
+.section-title { font-size: 42px; font-weight: 500; margin-bottom: 14px; color: var(--charcoal); }
+.section-subtitle { font-size: 18px; color: var(--text-light); max-width: 560px; margin: 0 auto; }
+
+/* ============================= SERVICES ============================= */
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+
+.service-card {
+  background: var(--bg-card);
+  padding: 36px 32px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+  text-align: left;
+}
+
+.service-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--sage); }
+.service-icon {
+  width: 52px; height: 52px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px;
+  background: var(--sage-pale);
+  color: var(--sage-dark);
+  margin-bottom: 18px;
+  transition: background 0.3s, color 0.3s;
+}
+.service-icon svg { width: 24px; height: 24px; }
+.service-card:hover .service-icon { background: var(--sage); color: #fff; }
+.service-card h3 { font-family: var(--font-serif); font-size: 21px; font-weight: 600; margin-bottom: 10px; color: var(--charcoal); }
+.service-card p { color: var(--text-light); font-size: 15px; }
+
+/* ============================= DOCTORS ============================= */
+.doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+
+.doctor-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.doctor-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+
+.doctor-header {
+  padding: 28px 24px;
+  text-align: center;
+  background: var(--charcoal);
+}
+
+.doctor-avatar {
+  width: 76px; height: 76px;
+  background: var(--sage-pale);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--sage-dark);
+  margin: 0 auto 14px;
+}
+.doctor-avatar svg { width: 34px; height: 34px; }
+
+.doctor-name { font-family: var(--font-serif); font-size: 19px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.doctor-specialty { font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--sage-light); }
+.doctor-body { padding: 22px; }
+.doctor-info { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.info-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-light); }
+.info-item svg { width: 16px; height: 16px; color: var(--sage-dark); flex-shrink: 0; }
+
+.doctor-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.03em; }
+.doctor-badge svg { width: 13px; height: 13px; }
+.badge-available { background: #DCEFE4; color: #1F6B49; }
+.badge-unavailable { background: #F7DADA; color: #A5342E; }
+
+/* ============================= FEATURES ============================= */
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; }
+.feature-card { text-align: left; padding: 8px; }
+.feature-icon {
+  width: 56px; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px;
+  background: var(--charcoal);
+  color: var(--sage-light);
+  margin-bottom: 18px;
+}
+.feature-icon svg { width: 26px; height: 26px; }
+.feature-card h3 { font-family: var(--font-serif); font-size: 20px; font-weight: 600; margin-bottom: 10px; color: var(--charcoal); }
+.feature-card p { color: var(--text-light); font-size: 15px; line-height: 1.6; }
+
+/* ============================= ABOUT ============================= */
+.about-content { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.about-text p { font-size: 16px; color: var(--text-light); margin-bottom: 16px; line-height: 1.8; }
+.about-features { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 26px; }
+.about-feature { font-size: 15px; font-weight: 600; color: var(--sage-dark); }
+.about-image { display: flex; flex-direction: column; gap: 20px; }
+
+.about-stat-card {
+  background: var(--charcoal);
+  padding: 36px;
+  border-radius: var(--radius);
+  text-align: center;
+  color: #fff;
+}
+.about-stat-card .stat-label { color: var(--sage-light); }
+.stat-big { font-size: 52px; font-weight: 500; color: #fff; line-height: 1; }
+
+/* ============================= CONTACT ============================= */
+.contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.contact-card { background: var(--bg-card); padding: 36px 32px; border-radius: var(--radius); border: 1px solid var(--border); text-align: left; transition: all 0.3s; }
+.contact-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.contact-icon {
+  width: 52px; height: 52px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px;
+  background: var(--sage-pale);
+  color: var(--sage-dark);
+  margin-bottom: 16px;
+}
+.contact-icon svg { width: 24px; height: 24px; }
+.contact-card h3 { font-family: var(--font-serif); font-size: 20px; font-weight: 600; margin-bottom: 10px; color: var(--charcoal); }
+.contact-card p { color: var(--text-light); font-size: 15px; margin-bottom: 4px; }
+
+/* ============================= FOOTER ============================= */
+.footer { background: var(--charcoal); color: var(--cream); padding: 64px 0 24px; }
+.footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 40px; margin-bottom: 40px; }
+.footer-section h4 { font-family: var(--font-serif); font-size: 17px; font-weight: 600; margin-bottom: 16px; color: #fff; }
+.footer-section p, .footer-section a { color: rgba(250, 247, 239, 0.65); text-decoration: none; display: block; margin-bottom: 9px; font-size: 14px; }
+.footer-section a:hover { color: var(--sage-light); }
+.footer-bottom { text-align: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); }
+.footer-bottom p { color: rgba(250, 247, 239, 0.45); font-size: 13px; }
+
+.loading-spinner { text-align: center; padding: 40px; color: var(--text-light); }
+
+/* ============================= ICONS (SVG, replacing emoji) ============================= */
+.icon { width: 20px; height: 20px; display: inline-block; vertical-align: -5px; flex-shrink: 0; }
+.logo-icon svg { width: 26px; height: 26px; }
+.sidebar-link-icon { display: inline-flex; }
+.sidebar-link-icon svg { width: 20px; height: 20px; }
+.chat-avatar svg { width: 20px; height: 20px; }
+.stat-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 12px; color: var(--primary); }
+.stat-icon svg { width: 36px; height: 36px; }
+.contact-card p .icon, .doctor-header .icon { margin-right: 6px; }
+.modal-close svg { width: 22px; height: 22px; }
+
+/* ============================= RESPONSIVE (public site) ============================= */
+@media (max-width: 968px) {
+  .about-content { grid-template-columns: 1fr; }
+  .mobile-menu-btn { display: flex; }
+  .nav-links {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--charcoal);
+    flex-direction: column; padding: 24px; gap: 16px;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-100%); opacity: 0; pointer-events: none; transition: all 0.3s;
+  }
+  .nav-links.active { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  .nav-buttons { width: 100%; flex-direction: column; }
+  .nav-buttons .btn { width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .section { padding: 64px 0; }
+  .section-title { font-size: 30px; }
+  .services-grid, .doctors-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================= PORTAL LAYOUT (admin/doctor/patient) ============================= */
+.portal-container { min-height: 100vh; display: flex; }
+
+/* Slim utility bar above the page header, spanning the main column only —
+   mirrors the reference dashboard's "MediCore Portal … St. Catherine's | Admin" strip. */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 36px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.topbar-toggle {
+  width: 34px; height: 34px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; border: 1px solid var(--border);
+  background: #fff; color: var(--charcoal); cursor: pointer;
+}
+.topbar-toggle:hover { background: var(--bg-alt); }
+.topbar-toggle svg { width: 17px; height: 17px; }
+.topbar-title { font-family: var(--font-serif); font-weight: 700; font-size: 17px; color: var(--charcoal); }
+.topbar-right { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--text-light); }
+.topbar-right .topbar-divider { color: var(--border); }
+.topbar-right .topbar-role { font-weight: 700; color: var(--charcoal); }
+
+/* Sidebar section labels ("Main", "Departments", "Administration") */
+.sidebar-group-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em;
+  color: rgba(255,255,255,0.36);
+  margin: 18px 12px 8px;
+}
+.sidebar-group-label:first-of-type { margin-top: 0; }
+
+/* Sidebar user row (avatar + name/role) above the logout button */
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.06); border-radius: 10px; margin-bottom: 12px; }
+.sidebar-user-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: var(--sage); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.sidebar-user-avatar svg { width: 18px; height: 18px; }
+.sidebar-user-info { min-width: 0; }
+.sidebar-user-name { font-weight: 600; font-size: 13.5px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-user-role { font-size: 11.5px; color: rgba(255,255,255,0.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.portal-sidebar {
+  width: 264px;
+  background: var(--charcoal);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.portal-sidebar .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; padding: 0 8px; }
+.portal-sidebar .logo-name { font-size: 19px; }
+.portal-sidebar .logo-name::after { content: none; }
+.portal-sidebar .logo-tagline { color: rgba(255,255,255,0.55); }
+
+.portal-sidebar .logo-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--sage);
+  color: #fff;
+}
+.portal-sidebar .logo-icon svg { width: 19px; height: 19px; }
+
+.portal-main { flex: 1; background: var(--bg-alt); overflow-y: auto; }
+
+.portal-header { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 26px 36px; }
+.portal-content { padding: 32px 36px; }
+
+.sidebar-link {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; border-radius: 10px;
+  text-decoration: none;
+  color: rgba(250, 247, 239, 0.68);
+  font-weight: 500; font-size: 14.5px;
+  transition: all 0.2s;
+}
+.sidebar-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.sidebar-link.active { background: #F4F2E9; color: var(--charcoal); font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.22); border-left: 3px solid var(--sage); padding-left: 13px; }
+.sidebar-link.active .sidebar-link-icon { color: var(--sage-dark); }
+.sidebar-link-icon { font-size: 18px; }
+
+/* ============================= CARDS / TABLES / FORMS ============================= */
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow); transition: box-shadow 0.2s, transform 0.2s; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.card-title { font-size: 20px; font-weight: 600; color: var(--charcoal); }
+
+/* KPI / stat cards on dashboards: existing markup is
+   <div class="card" style="text-align:center"><div class="stat-icon">…</div><div>value</div><div>label</div></div>
+   — reflow it into a left-aligned number with a rounded icon badge pinned
+   top-right, matching a standard hospital-dashboard KPI card. No HTML edits
+   required. */
+.card:has(> .stat-icon) {
+  position: relative;
+  text-align: left !important;
+  padding: 22px 24px 24px;
+}
+.card:has(> .stat-icon):hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.card:has(> .stat-icon) > div:nth-child(2) { margin-top: 2px; }
+.card:has(> .stat-icon) > div:nth-child(3) {
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; font-size: 12px !important;
+  order: -1; margin-bottom: 6px;
+}
+.card:has(> .stat-icon) { display: flex; flex-direction: column; }
+.stat-icon {
+  position: absolute; top: 20px; right: 20px;
+  width: 42px; height: 42px; margin-bottom: 0;
+  border-radius: 11px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  color: var(--charcoal);
+}
+.stat-icon svg { width: 20px; height: 20px; }
+
+.table { width: 100%; border-collapse: collapse; }
+.table thead th {
+  background: var(--bg-alt); padding: 12px 16px; text-align: left;
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--text-light); border-bottom: 1px solid var(--border);
+}
+.table tbody td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+.table tbody tr:hover { background: var(--bg-alt); }
+
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 13px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.badge-success { background: #DCEFE4; color: #1F6B49; }
+.badge-warning { background: #F7E4BC; color: #8A6614; }
+.badge-danger  { background: #F7DADA; color: #A5342E; }
+.badge-info    { background: #DCE6EF; color: #2E5273; }
+
+.form-group { margin-bottom: 18px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; align-items: end; }
+.form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 7px; color: var(--charcoal); }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 11px 15px;
+  border: 1px solid var(--border); border-radius: 10px;
+  font-size: 15px; font-family: inherit; background: #fff;
+  transition: border 0.2s, box-shadow 0.2s; color: var(--text);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px var(--sage-pale);
+}
+.password-wrapper { position: relative; }
+.password-input { padding-right: 44px; }
+.password-toggle {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; padding: 4px; cursor: pointer;
+  display: flex; align-items: center; color: var(--text-light);
+}
+.password-toggle:hover { color: var(--charcoal); }
+.form-textarea { resize: vertical; min-height: 100px; }
+
+/* Searchable dropdown (medicine / dosage / duration autocomplete) */
+.autocomplete-wrapper { position: relative; }
+.autocomplete-dropdown {
+  display: none;
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  max-height: 230px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+}
+.autocomplete-item {
+  padding: 9px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover,
+.autocomplete-item.active {
+  background: var(--sage-pale);
+  color: var(--sage-dark);
+}
+.autocomplete-item-empty {
+  padding: 9px 15px;
+  font-size: 13px;
+  color: var(--text-light);
+  cursor: default;
+}
+
+.alert { padding: 14px 18px; border-radius: 12px; margin-bottom: 16px; font-size: 14px; }
+.alert-success { background: var(--sage-pale); color: var(--sage-dark); border: 1px solid var(--sage-light); }
+.alert-error   { background: #F7DADA; color: #A5342E; border: 1px solid #E9B7B3; }
+.alert-info    { background: #DCE6EF; color: #2E5273; border: 1px solid #B9CCDD; }
+
+/* ============================= CHAT ============================= */
+.chat-container { display: flex; flex-direction: column; height: calc(100vh - 200px); background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+.chat-messages { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+.chat-message { display: flex; gap: 12px; max-width: 80%; }
+.chat-message.user { align-self: flex-end; flex-direction: row-reverse; }
+.chat-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--sage); color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.chat-bubble { background: var(--bg-alt); padding: 12px 16px; border-radius: 14px; font-size: 14px; line-height: 1.6; }
+.chat-message.user .chat-bubble { background: var(--charcoal); color: #fff; }
+.chat-bubble ul { margin: 8px 0; padding-left: 20px; }
+.chat-bubble li { margin-bottom: 4px; }
+.chat-bubble strong { font-weight: 700; }
+.chat-input-area { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
+.chat-input { flex: 1; padding: 11px 16px; border: 1px solid var(--border); border-radius: 999px; font-size: 15px; font-family: inherit; }
+.chat-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.suggestion-btn { padding: 8px 16px; border: 1px solid var(--border); border-radius: 999px; background: var(--bg-card); font-size: 13px; cursor: pointer; color: var(--charcoal); transition: all .15s; }
+.suggestion-btn:hover { background: var(--sage); color: #fff; border-color: var(--sage); }
+
+/* ============================= MODAL ============================= */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 61, 43, 0.55); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+/* Stacking: View EMR stays under form modals (prescription, vitals, etc.) */
+#emr-view-modal.modal-overlay { z-index: 2000; }
+#emr-modal.modal-overlay { z-index: 2300; }
+#admit-patient-modal.modal-overlay { z-index: 2300; }
+#admission-detail-modal.modal-overlay { z-index: 2200; }
+/* Nested modal content should scroll above backdrop */
+#emr-modal .modal { position: relative; z-index: 2301; }
+
+.modal { background: var(--bg-card); border-radius: var(--radius); max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px rgba(0,0,0,0.35); }
+.modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-size: 20px; font-weight: 600; color: var(--charcoal); }
+.modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light); }
+.modal-body { padding: 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; justify-content: flex-end; }
+
+/* ============================= PORTAL RESPONSIVE ============================= */
+@media (max-width: 900px) {
+  .portal-container { flex-direction: column; }
+  .portal-sidebar {
+    position: fixed; top: 0; left: 0; height: 100vh; width: 272px; max-width: 82vw;
+    z-index: 2600; transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.16, 0.8, 0.24, 1);
+    flex-direction: column; padding: 24px 18px; overflow-y: auto;
+  }
+  .portal-sidebar.open { transform: translateX(0); box-shadow: 0 0 48px rgba(0,0,0,0.4); }
+  .portal-sidebar .logo { display: flex; }
+  .sidebar-link { flex-shrink: 0; }
+  .sidebar-link span:last-child { display: inline; }
+  .portal-sidebar > div[style*="margin-top: auto"] { display: block; }
+  .sidebar-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    z-index: 2500; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+  .portal-header { padding: 18px 16px; }
+  .portal-content { padding: 18px 16px; }
+  .topbar { padding: 12px 16px; }
+  .topbar-right span:not(.topbar-role) { display: none; }
+  .card { padding: 18px; }
+  .card-header { flex-wrap: wrap; gap: 10px; }
+  .dashboard-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 640px) {
+  .portal-header h1 { font-size: 22px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .card-header { flex-direction: column; align-items: flex-start; }
+  .card-header > div:last-child { width: 100%; }
+  .card-header .btn { width: 100%; }
+  .modal { width: 94%; max-height: 94vh; }
+  .modal-header, .modal-body, .modal-footer { padding: 16px; }
+  .modal-footer { flex-direction: column-reverse; }
+  .modal-footer .btn { width: 100%; }
+  .chat-container { height: calc(100vh - 160px); }
+  .chat-message { max-width: 92%; }
+  .chat-input-area { padding: 12px 16px; flex-wrap: wrap; }
+  .btn-lg { padding: 12px 24px; font-size: 15px; }
+}
+
+/* Tables shouldn't force the whole page to scroll sideways — only the
+   card containing them scrolls, on any screen narrow enough that columns
+   don't fit. */
+.table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 900px) {
+  .table { min-width: 640px; }
+  .card:has(.table) { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* ============================= PORTAL PAGE SWITCHING ============================= */
+/* .page/.page.active is what js/*.js toggles — this was previously undefined,
+   so every dashboard tab rendered stacked. Defining it here fixes real behaviour
+   and, since CSS keyframe animations replay whenever an element goes from
+   display:none back to displayed, every tab switch now gets a soft luxury
+   pop-in for free — no JS changes needed. */
+.page { display: none; }
+.page.active {
+  display: block;
+  animation: pageIn 0.55s cubic-bezier(0.16, 0.8, 0.24, 1) both;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================= SCROLL REVEAL ============================= */
+/* Powers the "elements fade + rise into place as you scroll" effect on the
+   public site. Paired with js/scroll-reveal.js (IntersectionObserver).
+   Add data-reveal to any element; group siblings under a parent with
+   data-reveal-group for an automatic stagger. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.9s cubic-bezier(0.16, 0.8, 0.24, 1),
+              transform 0.9s cubic-bezier(0.16, 0.8, 0.24, 1);
+  will-change: opacity, transform;
+}
+[data-reveal="left"]  { transform: translate(-44px, 0); }
+[data-reveal="right"] { transform: translate(44px, 0); }
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal], .page.active {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+
+/* ============================================================
+   PREMIUM HMS UI — MediCore-inspired layer
+   Overrides only visuals; all existing class/id contracts kept.
+   ============================================================ */
+
+:root {
+  --charcoal: #003D2B;
+  --charcoal-2: #00563E;
+  --sage: #2D8A62;
+  --sage-dark: #063B2B;
+  --sage-light: #6F8F82;
+  --sage-pale: #E6F0EA;
+  --gold: #C9A227;
+  --gold-bright: #D4AF37;
+  --cream: #F8F6EE;
+  --cream-deep: #F6F3E8;
+  --rust: #D94A4A;
+  --primary: var(--sage);
+  --primary-dark: var(--sage-dark);
+  --primary-light: var(--sage-light);
+  --secondary: var(--gold);
+  --success: #2D8A62;
+  --danger: #D94A4A;
+  --warning: #D99A28;
+  --text: #12382B;
+  --text-light: #64766D;
+  --bg: var(--cream);
+  --bg-alt: var(--cream-deep);
+  --bg-card: #FFFFFF;
+  --border: #E5E0D4;
+  --shadow: 0 1px 2px rgba(6, 59, 43, 0.04), 0 10px 28px -14px rgba(6, 59, 43, 0.14);
+  --shadow-lg: 0 28px 56px -24px rgba(6, 59, 43, 0.28);
+  --radius: 16px;
+  --font-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  background: var(--cream-deep);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, .section-title, .card-title, .modal-title,
+.stat-value, .logo-name, .topbar-title, .portal-header h1 {
+  font-family: var(--font-serif);
+  color: var(--charcoal);
+}
+
+/* ---- Sidebar: deep forest ---- */
+.portal-sidebar {
+  width: 268px;
+  background: linear-gradient(180deg, #003D2B 0%, #002A1E 100%);
+  padding: 24px 16px;
+  border-right: none;
+  box-shadow: 8px 0 32px rgba(0, 30, 20, 0.25);
+}
+.portal-sidebar .logo-icon {
+  background: linear-gradient(135deg, #2D8A62, #1F6B4A);
+  box-shadow: 0 4px 12px rgba(45, 138, 98, 0.4);
+}
+.portal-sidebar .logo-name {
+  color: #F8F6EE;
+  font-size: 20px;
+  font-weight: 600;
+}
+.portal-sidebar .logo-tagline {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(248, 246, 238, 0.45);
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.sidebar-link {
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: rgba(248, 246, 238, 0.72);
+  font-size: 14px;
+}
+.sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+.sidebar-link.active {
+  background: #F4F2E9;
+  color: #003D2B;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  border-left: none;
+  padding-left: 14px;
+}
+.sidebar-link.active .sidebar-link-icon { color: #2D8A62; }
+
+.sidebar-group-label {
+  color: rgba(248, 246, 238, 0.32);
+  margin: 20px 12px 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+}
+
+.sidebar-user {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+}
+
+/* ---- Topbar ---- */
+.topbar {
+  background: rgba(248, 246, 238, 0.92);
+  backdrop-filter: blur(8px);
+  padding: 12px 32px;
+  border-bottom: 1px solid var(--border);
+}
+.topbar-title {
+  font-size: 16px;
+  color: var(--charcoal);
+}
+.topbar-right {
+  color: var(--sage);
+  font-weight: 500;
+}
+.topbar-role {
+  color: var(--charcoal) !important;
+}
+
+/* ---- Main canvas ---- */
+.portal-main {
+  background: var(--cream-deep);
+}
+.portal-header {
+  background: transparent;
+  border-bottom: none;
+  padding: 28px 36px 8px;
+}
+.portal-header h1 {
+  font-size: 34px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em;
+  color: var(--charcoal) !important;
+  margin-bottom: 6px !important;
+}
+.portal-header p {
+  color: var(--text-light) !important;
+  font-size: 14px;
+}
+.portal-content {
+  padding: 16px 36px 40px;
+}
+
+/* ---- KPI / stat cards (reference style) ---- */
+.portal-content > div[style*="grid-template-columns: repeat(auto-fit"] > .card,
+.portal-content .card[style*="text-align: center"] {
+  text-align: left !important;
+  padding: 22px 22px 18px !important;
+  border-radius: 18px;
+  border: 1px solid rgba(0, 61, 43, 0.06);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.portal-content > div[style*="grid-template-columns: repeat(auto-fit"] > .card:hover,
+.portal-content .card[style*="text-align: center"]:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+.portal-content .card[style*="text-align: center"] .stat-icon {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  border-radius: 12px;
+  background: var(--sage-pale);
+  color: var(--sage);
+}
+.portal-content .card[style*="text-align: center"] .stat-icon svg {
+  width: 20px;
+  height: 20px;
+}
+/* Large number */
+.portal-content .card[style*="text-align: center"] [id^="total-"],
+.portal-content .card[style*="text-align: center"] [id^="today-"],
+.portal-content .card[style*="text-align: center"] [id^="stat-"],
+.portal-content .card[style*="text-align: center"] [id*="count"],
+.portal-content .card[style*="text-align: center"] > div[style*="font-size: 32px"],
+.portal-content .card[style*="text-align: center"] > div[style*="font-size:32px"] {
+  font-family: var(--font-serif) !important;
+  font-size: 36px !important;
+  font-weight: 600 !important;
+  color: var(--charcoal) !important;
+  letter-spacing: -0.03em;
+  margin-top: 28px;
+  line-height: 1.1;
+}
+/* Label under number becomes uppercase meta — target light text divs */
+.portal-content .card[style*="text-align: center"] > div[style*="color: var(--text-light)"],
+.portal-content .card[style*="text-align: center"] > div[style*="text-light"] {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--text-light) !important;
+  margin-top: 6px;
+  order: -1;
+}
+
+/* Soft left accent */
+.portal-content .card[style*="text-align: center"]::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 14px; bottom: 14px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, var(--sage), var(--gold));
+}
+
+/* ---- Cards general ---- */
+.card {
+  border-radius: 18px;
+  border: 1px solid rgba(0, 61, 43, 0.06);
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13.5px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.btn-primary {
+  background: var(--charcoal);
+  color: #F8F6EE;
+  border: none;
+  box-shadow: 0 6px 16px -8px rgba(0, 61, 43, 0.55);
+}
+.btn-primary:hover {
+  background: var(--charcoal-2);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px -10px rgba(0, 61, 43, 0.6);
+}
+.btn-ghost {
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--charcoal);
+}
+.btn-ghost:hover {
+  background: var(--sage-pale);
+  border-color: var(--sage-light);
+}
+
+/* ---- Tables ---- */
+.table thead th {
+  background: #F3F0E6;
+  color: var(--text-light);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.table tbody td {
+  padding: 14px;
+  border-bottom: 1px solid #F0EDE3;
+  font-size: 13.5px;
+}
+.table tbody tr:hover {
+  background: rgba(45, 138, 98, 0.04);
+}
+
+/* ---- Badges ---- */
+.badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge-success { background: #E3F5EC; color: #1B6B45; }
+.badge-warning { background: #FBF0D4; color: #8A6500; }
+.badge-danger { background: #FDE8E6; color: #B03A3A; }
+.badge-info { background: #E6F0EA; color: #2D5A4A; }
+
+/* ---- Forms ---- */
+.form-input, .form-select, .form-textarea {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #FFFEFB;
+  padding: 11px 14px;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(45, 138, 98, 0.18);
+  outline: none;
+}
+
+/* ---- Modals ---- */
+.modal-overlay {
+  background: rgba(0, 30, 20, 0.55);
+  backdrop-filter: blur(5px);
+}
+.modal {
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255,255,255,0.1);
+  animation: premiumModalIn 0.25s ease both;
+}
+@keyframes premiumModalIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Quick actions (use with .quick-actions list) ---- */
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--sage-pale);
+  border: 1px solid transparent;
+  color: var(--charcoal);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.15s, border-color 0.15s;
+  font-family: var(--font-sans);
+  width: 100%;
+  text-align: left;
+}
+.quick-action:hover {
+  background: #dce9e1;
+  border-color: rgba(45, 138, 98, 0.2);
+  transform: translateX(3px);
+}
+.quick-action-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sage);
+  flex-shrink: 0;
+}
+.quick-action-icon svg { width: 18px; height: 18px; }
+
+/* ---- Dashboard grid responsive ---- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 1100px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- Greeting meta ---- */
+.greeting-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  color: var(--text-light);
+  font-size: 14px;
+}
+.greeting-meta .dot {
+  width: 4px; height: 4px; border-radius: 50%; background: var(--sage-light);
+}
+
+/* ---- Mobile sidebar ---- */
+@media (max-width: 900px) {
+  .portal-sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    z-index: 1200;
+    transform: translateX(-105%);
+    transition: transform 0.28s cubic-bezier(0.16, 0.8, 0.24, 1);
+    width: min(300px, 86vw);
+  }
+  .portal-sidebar.open { transform: translateX(0); }
+  .sidebar-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0, 30, 20, 0.45);
+    z-index: 1100;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+  .portal-header { padding: 20px 18px 4px; }
+  .portal-content { padding: 12px 18px 32px; }
+  .portal-header h1 { font-size: 26px !important; }
+}
+
+
+/* ============================================================
+   LIST & DATA PAGES POLISH
+   Makes non-dashboard tabs (tables, queues, inventories) match
+   the premium dashboard look — shared by every portal.
+   ============================================================ */
+
+/* Page header on list tabs: same hierarchy as dashboard */
+.page .portal-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 4px;
+}
+.page .portal-header h1 {
+  font-family: var(--font-serif);
+  font-size: 30px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em;
+  color: var(--charcoal) !important;
+  margin: 0 0 4px !important;
+}
+.page .portal-header p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-light) !important;
+}
+
+/* Content cards that hold tables / lists */
+.page .portal-content > .card,
+.page .portal-content .card {
+  border-radius: 18px;
+  border: 1px solid rgba(0, 61, 43, 0.07);
+  box-shadow: 0 1px 2px rgba(6, 59, 43, 0.04), 0 12px 28px -16px rgba(6, 59, 43, 0.12);
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+}
+.page .portal-content .card > .card-header,
+.page .portal-content .card .card-header {
+  padding: 18px 22px;
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #FBF9F3 0%, #FFFFFF 100%);
+}
+.page .portal-content .card .card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+/* Body padding when card has direct content */
+.page .portal-content .card > div:not(.card-header):not(.table-responsive):not(.table-wrap),
+.page .portal-content .card > form,
+.page .portal-content .card > p {
+  padding: 18px 22px;
+}
+.page .portal-content .card > .table-responsive,
+.page .portal-content .card > .table-wrap {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
+
+/* Toolbar row: search + filters + actions */
+.list-toolbar,
+.filter-bar,
+.page .portal-content .card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Search inputs on list pages */
+.page input[type="search"],
+.page input[type="text"].form-input,
+.page .form-input[type="search"],
+.page .search-input {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #FFFEFB;
+  padding: 10px 14px 10px 14px;
+  min-height: 42px;
+  font-size: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.page input[type="search"]:focus,
+.page .form-input:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(45, 138, 98, 0.16);
+  outline: none;
+}
+
+/* Select filters */
+.page .form-select {
+  border-radius: 12px;
+  min-height: 42px;
+  background: #FFFEFB;
+}
+
+/* Premium data tables */
+.page .table {
+  margin: 0;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.page .table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #F3F0E6;
+  color: #64766D;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.page .table tbody td {
+  padding: 15px 18px;
+  border-bottom: 1px solid #F0EDE4;
+  font-size: 13.5px;
+  color: var(--text);
+  vertical-align: middle;
+}
+.page .table tbody tr {
+  transition: background 0.12s ease;
+}
+.page .table tbody tr:last-child td {
+  border-bottom: none;
+}
+.page .table tbody tr:hover {
+  background: rgba(45, 138, 98, 0.045);
+}
+/* Primary name cell emphasis */
+.page .table tbody td strong,
+.page .table tbody td b {
+  font-weight: 600;
+  color: var(--charcoal);
+  font-size: 14px;
+}
+
+/* Action button groups in table rows */
+.page .table td .btn,
+.page .table td button {
+  margin: 2px;
+}
+.page .table .btn-sm {
+  padding: 6px 12px;
+  font-size: 12.5px;
+}
+
+/* Empty states */
+.page .portal-content .card p[style*="text-align: center"],
+.page .portal-content .card > p[style*="color: var(--text-light)"] {
+  padding: 40px 24px !important;
+  text-align: center;
+  color: var(--text-light) !important;
+  font-size: 14px;
+}
+
+/* Nested grids of cards inside list pages (forms + lists) */
+.page .portal-content > div[style*="grid"] {
+  gap: 20px;
+}
+.page .portal-content > div[style*="grid"] > .card {
+  height: 100%;
+}
+
+/* Section subtitle under list titles */
+.list-subtitle {
+  font-size: 13.5px;
+  color: var(--text-light);
+  margin: 0;
+}
+
+/* Status chip row above tables */
+.page .badge {
+  vertical-align: middle;
+}
+
+/* Inventory / order row density */
+.page .table-responsive {
+  max-height: none;
+  overflow-x: auto;
+}
+
+/* Form cards on list pages (add medicine, add ward, etc.) */
+.page .portal-content .card form {
+  padding: 18px 22px 20px;
+}
+.page .portal-content .card .form-group {
+  margin-bottom: 14px;
+}
+.page .portal-content .card .form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Two-column list layouts (form left, table right) */
+@media (min-width: 1000px) {
+  .page .portal-content > div[style*="grid-template-columns"] {
+    align-items: start;
+  }
+}
+
+/* Soft count pills next to section titles */
+.count-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--sage-pale);
+  color: var(--sage-dark);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+}
+
+/* Loading state inside list cards */
+.page .loading-spinner {
+  padding: 48px 24px;
+}
+
+/* Patient / order "chip" lists */
+.patient-chip, .order-chip, .list-chip {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 14px 16px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.patient-chip:hover, .order-chip:hover, .list-chip:hover,
+.patient-chip.active {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(45, 138, 98, 0.14);
+  transform: translateY(-1px);
+}
+
+/* Receipt / detail panels */
+.page #receipt-panel,
+.page .detail-panel {
+  border-radius: 18px;
+  border: 1px solid rgba(0, 61, 43, 0.07);
+  background: #fff;
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+/* Mobile: stack toolbars, full-width buttons */
+@media (max-width: 700px) {
+  .page .portal-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .page .portal-header .btn {
+    width: 100%;
+  }
+  .page .table thead th,
+  .page .table tbody td {
+    padding: 12px 12px;
+  }
+}
+
+
+/* List body padding when content is injected by JS into a div */
+.page .portal-content .card > div[id$="-list"],
+.page .portal-content .card > div[id$="-table"],
+.page .portal-content .card > div[id$="-overview"],
+.page .portal-content .card > div[id*="list"],
+.page .portal-content .card > #doctors-list,
+.page .portal-content .card > #patients-list,
+.page .portal-content .card > #appointments-list,
+.page .portal-content .card > #staff-list,
+.page .portal-content .card > #orders-list,
+.page .portal-content .card > #inventory-list,
+.page .portal-content .card > #bills-list,
+.page .portal-content .card > #pending-orders,
+.page .portal-content .card > #low-stock-list {
+  padding: 0;
+}
+.page .portal-content .card > div[id$="-list"] > .table-responsive,
+.page .portal-content .card > div[id*="list"] > .table-responsive,
+.page .portal-content .card > div[id*="list"] > .table-wrap {
+  border: none;
+  border-radius: 0;
+}
+
+/* Search row above lists often sits in card-header sibling — pad forms in headers */
+.page .portal-content .card-header .form-input,
+.page .portal-content .card-header .form-select,
+.page .portal-content .card-header input,
+.page .portal-content .card-header select {
+  min-width: 180px;
+}
+
+/* Soft divider between stacked cards on a tab */
+.page .portal-content > .card + .card {
+  margin-top: 4px;
+}
+
+
+/* ============================================================
+   FORMS • CHARTS • SCALES — all tabs, all portals
+   ============================================================ */
+
+.chart-card {
+  padding: 0 !important;
+  overflow: hidden;
+}
+.chart-card .card-header {
+  padding: 16px 20px 8px !important;
+  border-bottom: none !important;
+  background: transparent !important;
+}
+.chart-wrap {
+  padding: 8px 16px 20px;
+  height: 240px;
+  position: relative;
+}
+.chart-wrap--donut {
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Form controls — premium density */
+.page .form-group,
+.modal .form-group,
+.card .form-group {
+  margin-bottom: 16px;
+}
+.page .form-label,
+.modal .form-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 7px;
+}
+.page .form-input,
+.page .form-select,
+.page .form-textarea,
+.modal .form-input,
+.modal .form-select,
+.modal .form-textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: 14px;
+  background: #FFFEFB;
+  color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  font-family: var(--font-sans);
+}
+.page .form-input:hover,
+.page .form-select:hover,
+.modal .form-input:hover {
+  border-color: #D0C9BA;
+}
+.page .form-input:focus,
+.page .form-select:focus,
+.page .form-textarea:focus,
+.modal .form-input:focus,
+.modal .form-select:focus,
+.modal .form-textarea:focus {
+  outline: none;
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(45, 138, 98, 0.18);
+  background: #fff;
+}
+.page .form-textarea,
+.modal .form-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* Input with leading icon */
+.input-with-icon {
+  position: relative;
+}
+.input-with-icon > svg,
+.input-with-icon > .icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--sage-light);
+  pointer-events: none;
+}
+.input-with-icon > input,
+.input-with-icon > select {
+  padding-left: 40px !important;
+}
+
+/* Scale / progress meters (occupancy, stock, workload) */
+.metric-scale {
+  margin-top: 10px;
+}
+.metric-scale-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.metric-scale-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--sage-pale);
+  overflow: hidden;
+}
+.metric-scale-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--sage), var(--gold));
+  transition: width 0.5s ease;
+}
+.metric-scale-fill.is-warn {
+  background: linear-gradient(90deg, var(--warning), #E8B44C);
+}
+.metric-scale-fill.is-danger {
+  background: linear-gradient(90deg, var(--danger), #E87A6A);
+}
+
+/* AI chat premium */
+.chat-container {
+  border-radius: 18px !important;
+  border: 1px solid rgba(0, 61, 43, 0.08) !important;
+  box-shadow: var(--shadow) !important;
+  overflow: hidden;
+  background: #fff !important;
+}
+.chat-messages {
+  background: linear-gradient(180deg, #F8F6EE 0%, #fff 40%) !important;
+}
+.chat-message.bot,
+.chat-message.ai {
+  background: #fff !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px 16px 16px 4px !important;
+  box-shadow: 0 2px 8px rgba(0,61,43,0.04);
+}
+.chat-message.user {
+  background: var(--charcoal) !important;
+  color: #F8F6EE !important;
+  border-radius: 16px 16px 4px 16px !important;
+}
+.chat-input-area {
+  background: #FBF9F3 !important;
+  border-top: 1px solid var(--border) !important;
+  padding: 14px 16px !important;
+}
+.chat-input-area input,
+.chat-input-area textarea {
+  border-radius: 999px !important;
+  border: 1.5px solid var(--border) !important;
+  padding: 12px 18px !important;
+}
+
+/* Login premium */
+body.login-body {
+  background:
+    radial-gradient(900px 500px at 10% 0%, rgba(45,138,98,0.25), transparent 55%),
+    radial-gradient(800px 400px at 100% 100%, rgba(201,162,39,0.18), transparent 50%),
+    #003D2B !important;
+}
+.login-card, .auth-card, body.login-body .card {
+  border-radius: 22px !important;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+}
+
+/* Section icon next to card titles */
+.card-title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title-with-icon .title-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--sage-pale);
+  color: var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-title-with-icon .title-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Billing / clerk forms */
+#preview-panel, #receipt-panel {
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(0,61,43,0.07);
+  box-shadow: var(--shadow);
+}
+
+
+/* Charts always full-width row UNDER KPI cards — never inside the KPI grid */
+.charts-row {
+  display: grid !important;
+  grid-template-columns: 2fr 1fr !important;
+  gap: 24px !important;
+  width: 100%;
+  margin: 0 0 28px 0 !important;
+  clear: both;
+}
+.charts-row .chart-card {
+  min-height: 300px;
+}
+@media (max-width: 1000px) {
+  .charts-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* KPI grid must only contain KPI cards */
+.portal-content > div[style*="repeat(auto-fit"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+
+/* ============================================================
+   TAB PAGE STANDARD — match admin dashboard quality everywhere
+   ============================================================ */
+.page .portal-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.page .portal-header h1 {
+  font-family: var(--font-serif) !important;
+  font-size: 30px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em;
+  color: var(--charcoal) !important;
+  margin: 0 0 4px !important;
+}
+.page .portal-header p {
+  margin: 0;
+  color: var(--text-light) !important;
+  font-size: 14px;
+}
+.page .portal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.page .portal-content > .card {
+  border-radius: 18px;
+  border: 1px solid rgba(0, 61, 43, 0.07);
+  box-shadow: 0 1px 2px rgba(6, 59, 43, 0.04), 0 12px 28px -16px rgba(6, 59, 43, 0.12);
+  background: #fff;
+}
+.page .portal-content > .card .card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #FBF9F3, #fff);
+  margin-bottom: 0;
+}
+.page .portal-content > .card .card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+
+/* Ensure KPI numbers stay serif and large on every portal */
+.page .card[style*="text-align: center"] > div[id],
+.page .card[style*="text-align:center"] > div[id] {
+  font-family: var(--font-serif) !important;
+  font-size: 36px !important;
+  font-weight: 600 !important;
+  color: var(--charcoal) !important;
+}
+
+
+/* ============================================================
+   DESIGN SYSTEM — spacing & containment (all portals)
+   Do not reduce horizontal padding on card forms/buttons.
+   Cards use padding:0; internal sections own the rhythm.
+   ============================================================ */
+
+/* --- Cards: consistent shell --- */
+.page .portal-content > .card,
+.page .portal-content .card {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+/* KPI / stat cards keep their own padding */
+.page .portal-content .card:has(> .stat-icon),
+.page .portal-content .card[style*="text-align: center"] {
+  padding: 22px 24px !important;
+  overflow: visible;
+}
+
+/* --- Card headers: title + controls, never flush to outer edge --- */
+.page .portal-content .card > .card-header,
+.page .portal-content .card .card-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  padding: 16px 22px;
+  margin: 0;
+  border-bottom: 1px solid var(--border, #E8E4D9);
+  background: linear-gradient(180deg, #FBF9F3 0%, #FFFFFF 100%);
+}
+
+.page .portal-content .card > .card-header .card-title,
+.page .portal-content .card .card-header .card-title {
+  margin: 0;
+}
+
+/* Toolbar headers (filters + search): keep one horizontal row */
+.page .portal-content .card > .card-header.list-toolbar,
+.page .portal-content .card .list-toolbar {
+  flex-direction: row !important;
+  align-items: center !important;
+}
+
+.list-toolbar-controls {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.filter-pills {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-pills .btn,
+.filter-pills .filter-pill {
+  margin: 0;
+}
+
+.list-search {
+  max-width: 220px;
+  min-width: 140px;
+  height: 36px;
+  border-radius: 999px;
+}
+
+/* --- Card body: forms, grids, action rows, generic blocks --- */
+.page .portal-content .card > form,
+.page .portal-content .card form,
+.page .portal-content .card > .form-grid,
+.page .portal-content .card > .card-body-pad,
+.page .portal-content .card > .primary-action-wrap,
+.page .portal-content .card > p,
+.page .portal-content .card > .quick-actions {
+  padding: 18px 22px 20px !important;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Form grid rhythm */
+.page .portal-content .card .form-grid,
+.page .form-grid {
+  display: grid;
+  gap: 16px;
+  align-items: end;
+}
+
+.page .portal-content .card .form-group {
+  margin-bottom: 0;
+}
+
+/* Direct child buttons (e.g. "+ Book …") must not touch card edges */
+.page .portal-content .card > .btn,
+.page .portal-content .card > button.btn {
+  margin: 16px 22px 20px !important;
+}
+
+.page .portal-content .card > .btn + .btn,
+.page .portal-content .card > button.btn + button.btn {
+  margin-left: 0 !important;
+}
+
+/* Action wrap inside padded body — no extra edge collision */
+.primary-action-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 4px 0 2px;
+  margin: 0;
+}
+.primary-action-wrap .btn {
+  margin: 0 !important;
+}
+
+/* Nested form already padded: don't zero horizontal padding */
+.page .portal-content .card form .form-grid {
+  padding: 0;
+  margin: 0;
+}
+
+/* --- Lists / tables: sit under header with no double padding clash --- */
+.page .portal-content .card > div[id$="-list"],
+.page .portal-content .card > div[id$="-table"],
+.page .portal-content .card > div[id*="list"],
+.page .portal-content .card > #doctors-list,
+.page .portal-content .card > #patients-list,
+.page .portal-content .card > #appointments-list,
+.page .portal-content .card > #schedules-list,
+.page .portal-content .card > #staff-list,
+.page .portal-content .card > #wards-list,
+.page .portal-content .card > #beds-list,
+.page .portal-content .card > #orders-list,
+.page .portal-content .card > #inventory-list {
+  padding: 0 0 8px 0 !important;
+}
+
+.page .portal-content .card > .table-responsive,
+.page .portal-content .card > .table-wrap,
+.page .portal-content .card > div[id$="-list"] > .table-responsive,
+.page .portal-content .card > div[id*="list"] > .table-responsive {
+  padding: 0 !important;
+  border: none;
+  border-radius: 0;
+}
+
+.page .table thead th {
+  padding: 12px 18px;
+}
+
+.page .table tbody td {
+  padding: 14px 18px;
+}
+
+/* Table action buttons: small gap, never flush */
+.page .table td .btn,
+.page .table td button {
+  margin: 2px 4px 2px 0;
+}
+
+/* --- Buttons keep pill shape; spacing is the fix, not radius --- */
+.page .btn,
+.btn {
+  border-radius: 999px;
+}
+
+.page .form-input,
+.page .form-select,
+.form-input,
+.form-select {
+  border-radius: 12px;
+}
+
+/* Modal bodies: same breathing room */
+.modal-content,
+.modal-body {
+  box-sizing: border-box;
+}
+.modal-body {
+  padding: 18px 22px 22px;
+}
+.modal-header {
+  padding: 16px 22px;
+  gap: 12px;
+}
+.modal-footer {
+  padding: 14px 22px 18px;
+  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Mobile: toolbar can wrap but stays row-oriented */
+@media (max-width: 900px) {
+  .list-toolbar-controls {
+    width: 100%;
+    margin-left: 0;
+  }
+  .list-search {
+    max-width: none;
+    flex: 1 1 140px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page .portal-content .card > .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .list-toolbar-controls {
+    width: 100%;
+  }
+}
+
+
+/* ============================================================
+   Lab lists + empty states + form action spacing
+   ============================================================ */
+
+.empty-state {
+  padding: 36px 24px !important;
+  text-align: center;
+  color: var(--text-light, #7a8478);
+  font-size: 14.5px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.page .portal-content .card > div[id$="-list"] .empty-state,
+.page .portal-content .card .empty-state {
+  padding: 40px 24px !important;
+}
+
+/* Structured lab / generic order list */
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 4px 0 8px;
+}
+
+.order-list-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid #F0EDE4;
+  background: #fff;
+}
+
+.order-list-item:last-child {
+  border-bottom: none;
+}
+
+.order-list-item:hover {
+  background: rgba(45, 138, 98, 0.04);
+}
+
+.order-list-main {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.order-list-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.order-list-id {
+  font-size: 15px;
+  color: var(--charcoal, #003D2B);
+}
+
+.order-list-patient {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--charcoal, #003D2B);
+}
+
+.order-list-meta {
+  font-size: 13px;
+  color: var(--text-light, #7a8478);
+  margin-top: 3px;
+}
+
+.order-list-time {
+  font-size: 12px;
+  color: var(--text-light, #7a8478);
+  margin-top: 4px;
+}
+
+.order-list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* Legacy list-item (other portals) */
+.list-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 22px;
+  border-bottom: 1px solid #F0EDE4;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+/* data-table = same as .table */
+table.data-table,
+.page table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.data-table thead th,
+.page table.data-table thead th {
+  background: #F3F0E6;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64766D;
+  white-space: nowrap;
+}
+
+table.data-table tbody td,
+.page table.data-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #F0EDE4;
+  font-size: 13.5px;
+  vertical-align: middle;
+}
+
+/* Form submit button: never collide with previous field */
+.page .portal-content .card form .form-grid .form-group .btn,
+.page .portal-content .card form .btn-primary,
+.page .portal-content .card form > .btn,
+.page .portal-content .card .form-grid + .btn,
+.page .portal-content .card form .form-group:last-child .btn {
+  margin-top: 8px;
+}
+
+.page .portal-content .card form .form-group .btn {
+  width: auto;
+  min-width: 140px;
+}
+
+/* When button is alone under a select in a grid cell */
+.page .form-group .btn.btn-primary {
+  margin-top: 10px;
+}
+
+
+/* Pharmacy: Log dose modal must stack above open MAR history */
+#mar-history-modal.modal-overlay { z-index: 2400 !important; }
+#administer-modal.modal-overlay { z-index: 2600 !important; }
+#administer-modal .modal { position: relative; z-index: 2601; }
