@@ -1,4 +1,6 @@
 import os
+import json
+import base64
 import firebase_admin
 
 from firebase_admin import credentials
@@ -12,13 +14,32 @@ if not firebase_admin._apps:
     # Resolve path relative to this file's project root
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     sa_path = os.path.join(base_dir, "firebase", "service-account.json")
+
+    cred = None
     if os.path.exists(sa_path):
+        # Local dev: the gitignored file is present on disk.
         cred = credentials.Certificate(sa_path)
+    else:
+        # Deployed environments (e.g. Railway): the file is never pushed
+        # since it's gitignored (it's a private key). Fall back to a
+        # base64-encoded copy stored in an env var instead.
+        sa_b64 = os.environ.get("FIREBASE_SERVICE_ACCOUNT_B64")
+        if sa_b64:
+            try:
+                sa_info = json.loads(base64.b64decode(sa_b64))
+                cred = credentials.Certificate(sa_info)
+            except Exception as e:
+                logger.error(f"Failed to parse FIREBASE_SERVICE_ACCOUNT_B64: {e}")
+
+    if cred:
         firebase_admin.initialize_app(cred)
         _FIREBASE_INITIALIZED = True
         logger.info("Firebase Admin SDK initialized successfully.")
     else:
-        logger.warning(f"Firebase service account not found at {sa_path}. Notifications disabled.")
+        logger.warning(
+            f"Firebase service account not found at {sa_path} and "
+            "FIREBASE_SERVICE_ACCOUNT_B64 env var is not set. Notifications disabled."
+        )
 
 
 def send_notification(
