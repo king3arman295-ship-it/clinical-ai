@@ -1,16 +1,11 @@
 // API Configuration - Auto-detect host
 const API_CONFIG = (function() {
-  const { protocol, hostname } = window.location;
-  
-  // If running locally (file://) or localhost, use localhost:8000
-  if (!hostname || protocol === 'file:' || hostname === 'localhost' || hostname === '127.0.0.1') {
+  const { hostname } = window.location;
+  if (!hostname || hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:8000';
   }
-  
-  // Otherwise, use same host as frontend with port 8000
-  return `${protocol}//${hostname}:8000`;
+  return 'https://clinical-ai-production-8340.up.railway.app';
 })();
-
 console.log('API Base URL:', API_CONFIG);
 
 // Auth token storage
