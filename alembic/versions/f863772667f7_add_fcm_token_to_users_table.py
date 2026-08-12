@@ -20,16 +20,24 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    op.add_column(
-        "users",
-        sa.Column("fcm_token", sa.String(), nullable=True),
-    )
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    existing_columns = [col["name"] for col in inspector.get_columns("users")]
+    if "fcm_token" not in existing_columns:
+        op.add_column(
+            "users",
+            sa.Column("fcm_token", sa.String(), nullable=True),
+        )
 
 
 def downgrade() -> None:
     """Downgrade schema."""
-    op.drop_column(
-        "users",
-        "fcm_token",
-    )
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    existing_columns = [col["name"] for col in inspector.get_columns("users")]
+    if "fcm_token" in existing_columns:
+        op.drop_column(
+            "users",
+            "fcm_token",
+        )
 
