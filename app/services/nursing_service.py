@@ -509,11 +509,11 @@ class NursingService:
         )
 
         # Notify patient that a medicine course / dose schedule is ready
-            try:
-                self._notify_patient_of_course(db, admission, course)
-            except Exception:
-                pass
-            return ServiceResult.Success("Medication course created.", self._enrich_course(db, course))
+        try:
+            self._notify_patient_of_course(db, admission, course)
+        except Exception:
+            pass
+        return ServiceResult.Success("Medication course created.", self._enrich_course(db, course))
 
     def update_course(self, db: Session, course_id: int, data: MedicationCourseUpdate):
         course = self.course_repo.get_by_id_full(db, course_id)
@@ -1103,8 +1103,9 @@ class NursingService:
             return
         title = "💊 New medicine schedule"
         body = (
-            f"Your doctor ordered "{course.title or 'a medication course'}" "
-            f"for {course.duration_days} day(s). Check My Admission & Medicines for dose times."
+            "Your doctor ordered a medication course for "
+            f"{course.duration_days} day(s). "
+            "Check My Admission & Medicines for dose times."
         )
         try:
             send_notification(token=token, title=title, body=body)
