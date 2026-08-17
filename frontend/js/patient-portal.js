@@ -1401,30 +1401,46 @@ async function loadMyTodayDoses() {
       doses = [];
     }
 
-    // Also build schedule from recent OPD prescriptions (frequency × today)
+    // OPD prescriptions: only while still within prescribed duration (not forever)
     try {
       const user = Auth.getUser();
       if (user?.patient_id) {
-        const timeline = await API.get(`/emr/patients/${user.patient_id}/timeline`).catch(() => null);
-        const prescriptions = timeline?.prescriptions || timeline?.data?.prescriptions || [];
-        const today = new Date();
-        prescriptions.slice(0, 15).forEach(p => {
-          (p.items || []).forEach(item => {
-            const times = estimateDoseTimes(item.frequency);
-            times.forEach(t => {
-              doses.push({
-                id: `rx-${p.id}-${item.medicine_name}-${t}`,
-                scheduled_time: t,
-                scheduled_date: today.toISOString().slice(0, 10),
-                status: 'pending',
-                medicine_name: item.medicine_name,
-                dosage: item.dosage,
-                frequency: item.frequency,
-                source: 'prescription',
+        // If patient is currently admitted, course doses from API are enough
+        const admissions = await API.get('/admissions/me').catch(() => []);
+        const list = Array.isArray(admissions) ? admissions : (admissions?.data || []);
+        const isAdmitted = list.some(a => String(a.status || '').toLowerCase() === 'admitted');
+
+        if (!isAdmitted) {
+          const timeline = await API.get(`/emr/patients/${user.patient_id}/timeline`).catch(() => null);
+          const prescriptions = timeline?.prescriptions || timeline?.data?.prescriptions || [];
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          prescriptions.slice(0, 20).forEach(p => {
+            const start = p.created_at ? new Date(p.created_at) : null;
+            if (!start || isNaN(start.getTime())) return;
+            start.setHours(0,0,0,0);
+            (p.items || []).forEach(item => {
+              const durMatch = String(item.duration || '').match(/(\d+)/);
+              const days = durMatch ? Math.max(1, parseInt(durMatch[1], 10)) : 1;
+              const end = new Date(start);
+              end.setDate(end.getDate() + days - 1);
+              if (today < start || today > end) return; // course of Rx finished
+              const times = estimateDoseTimes(item.frequency);
+              times.forEach(t => {
+                doses.push({
+                  id: `rx-${p.id}-${item.medicine_name}-${t}`,
+                  scheduled_time: t,
+                  scheduled_date: today.toISOString().slice(0, 10),
+                  status: 'pending',
+                  medicine_name: item.medicine_name,
+                  dosage: item.dosage,
+                  frequency: item.frequency,
+                  source: 'prescription',
+                });
               });
             });
           });
-        });
+        }
       }
     } catch (_) {}
 

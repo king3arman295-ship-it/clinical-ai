@@ -961,7 +961,7 @@ class NursingService:
 
 
     def get_today_doses_for_patient(self, db: Session, patient_id: int, day: date | None = None):
-        """Today's scheduled doses for a patient (active admissions)."""
+        """Today's scheduled doses for a patient — only active admissions + active courses."""
         day = day or date.today()
         from app.models.admission import Admission
         from app.models.medication_course import MedicationCourseDose, MedicationCourseItem, MedicationCourse
@@ -970,7 +970,7 @@ class NursingService:
             db.query(Admission)
             .filter(
                 Admission.patient_id == patient_id,
-                Admission.status.in_(["admitted", "pending"]),
+                Admission.status == "admitted",  # not discharged / cancelled / pending without stay
             )
             .all()
         )
@@ -978,15 +978,24 @@ class NursingService:
             return ServiceResult.Success("No active admission.", [])
 
         adm_ids = [a.id for a in admissions]
-        doses = (
+        q = (
             db.query(MedicationCourseDose)
+            .join(MedicationCourse, MedicationCourseDose.course_id == MedicationCourse.id)
             .filter(
                 MedicationCourseDose.admission_id.in_(adm_ids),
                 MedicationCourseDose.scheduled_date == day,
+                MedicationCourse.status == "active",
             )
-            .order_by(MedicationCourseDose.scheduled_time.asc())
-            .all()
         )
+        # Respect course end_date when present
+        try:
+            q = q.filter(
+                (MedicationCourse.end_date.is_(None)) | (MedicationCourse.end_date >= day)
+            )
+        except Exception:
+            pass
+
+        doses = q.order_by(MedicationCourseDose.scheduled_time.asc()).all()
         out = []
         for d in doses:
             item = d.item
@@ -1008,6 +1017,7 @@ class NursingService:
             })
         return ServiceResult.Success("Today's doses loaded.", out)
 
+    
     def send_upcoming_patient_dose_reminders(self, db: Session, window_minutes: int = 10) -> int:
         """Push FCM to patients for pending doses due within the next window_minutes."""
         from datetime import datetime, timedelta
@@ -1048,8 +1058,15 @@ class NursingService:
                 continue
 
             admission = db.query(Admission).filter(Admission.id == d.admission_id).first()
-            if not admission:
+            if not admission or getattr(admission, "status", None) != "admitted":
                 continue
+            # skip if course ended
+            course = getattr(d, "course", None)
+            if course is not None:
+                if getattr(course, "status", None) and course.status != "active":
+                    continue
+                if getattr(course, "end_date", None) and course.end_date < day:
+                    continue
             patient = db.query(Patient).filter(Patient.id == admission.patient_id).first()
             if not patient:
                 continue

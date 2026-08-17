@@ -402,6 +402,22 @@ class AdmissionService:
 
             admission.status = AdmissionStatus.DISCHARGED.value
             admission.discharge_summary = data.discharge_summary
+            # End active medication courses so patient reminders stop
+            try:
+                from app.models.medication_course import MedicationCourse
+                courses = (
+                    db.query(MedicationCourse)
+                    .filter(
+                        MedicationCourse.admission_id == admission.id,
+                        MedicationCourse.status == "active",
+                    )
+                    .all()
+                )
+                for c in courses:
+                    c.status = "completed"
+                    db.add(c)
+            except Exception:
+                pass
             admission.discharged_at = datetime.utcnow()
             updated = self.admission_repo.update(db, admission)
 
