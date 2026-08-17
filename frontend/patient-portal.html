@@ -365,6 +365,19 @@
             </div>
           </div>
 
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <h2 class="card-title" style="margin:0;">Today's Medicine Schedule</h2>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="loadMyTodayDoses()">Refresh</button>
+            </div>
+            <p style="color:var(--text-light); font-size:13px; margin:0 0 12px; padding:0 4px;">
+              Dose times from your doctor's course / prescription. You will also get a reminder near each time.
+            </p>
+            <div id="today-doses-list">
+              <div class="loading-spinner">Loading today's doses...</div>
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-header">
               <h2 class="card-title">My Prescribed Medicines</h2>

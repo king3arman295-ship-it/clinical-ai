@@ -44,6 +44,13 @@ def startup_event():
     # Video-appointment reminder scheduler intentionally not started —
     # see the note above the imports at the top of this file.
 
+    # Patient medicine dose reminders (ward courses) — every 1 minute
+    try:
+        from app.scheduler.medicine_reminder_scheduler import start_medicine_reminder_scheduler
+        start_medicine_reminder_scheduler()
+    except Exception as e:
+        logger.warning(f"Medicine reminder scheduler not started: {e}")
+
     # Create uploads directory for EMR reports
     uploads_dir = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),

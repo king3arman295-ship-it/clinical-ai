@@ -508,7 +508,12 @@ class NursingService:
             body=f"Doctor ordered a medication course for admission #{admission.id}.",
         )
 
-        return ServiceResult.Success("Medication course created.", self._enrich_course(db, course))
+        # Notify patient that a medicine course / dose schedule is ready
+            try:
+                self._notify_patient_of_course(db, admission, course)
+            except Exception:
+                pass
+            return ServiceResult.Success("Medication course created.", self._enrich_course(db, course))
 
     def update_course(self, db: Session, course_id: int, data: MedicationCourseUpdate):
         course = self.course_repo.get_by_id_full(db, course_id)
@@ -953,3 +958,155 @@ class NursingService:
                     send_notification(token, title=title, body=body)
         except Exception as e:
             logger.warning(f"Role notify ({role}) failed: {e}")
+
+
+    def get_today_doses_for_patient(self, db: Session, patient_id: int, day: date | None = None):
+        """Today's scheduled doses for a patient (active admissions)."""
+        day = day or date.today()
+        from app.models.admission import Admission
+        from app.models.medication_course import MedicationCourseDose, MedicationCourseItem, MedicationCourse
+
+        admissions = (
+            db.query(Admission)
+            .filter(
+                Admission.patient_id == patient_id,
+                Admission.status.in_(["admitted", "pending"]),
+            )
+            .all()
+        )
+        if not admissions:
+            return ServiceResult.Success("No active admission.", [])
+
+        adm_ids = [a.id for a in admissions]
+        doses = (
+            db.query(MedicationCourseDose)
+            .filter(
+                MedicationCourseDose.admission_id.in_(adm_ids),
+                MedicationCourseDose.scheduled_date == day,
+            )
+            .order_by(MedicationCourseDose.scheduled_time.asc())
+            .all()
+        )
+        out = []
+        for d in doses:
+            item = d.item
+            med_name = item.medicine_name if item else "Medicine"
+            dosage = item.dosage if item else None
+            route = item.route if item else None
+            out.append({
+                "id": d.id,
+                "admission_id": d.admission_id,
+                "scheduled_date": str(d.scheduled_date),
+                "scheduled_time": d.scheduled_time or "08:00",
+                "status": d.status,
+                "medicine_name": med_name,
+                "dosage": dosage,
+                "route": route,
+                "frequency": item.frequency if item else None,
+                "instructions": item.instructions if item else None,
+                "patient_reminded": bool(getattr(d, "patient_reminded", False)),
+            })
+        return ServiceResult.Success("Today's doses loaded.", out)
+
+    def send_upcoming_patient_dose_reminders(self, db: Session, window_minutes: int = 10) -> int:
+        """Push FCM to patients for pending doses due within the next window_minutes."""
+        from datetime import datetime, timedelta
+        from app.models.medication_course import MedicationCourseDose, MedicationCourseItem
+        from app.models.admission import Admission
+        from app.models.patient import Patient
+        from app.models.user import User
+        from app.services.firebase_service import send_notification
+        from app.core.logger import logger
+
+        now = datetime.now()
+        today = now.date()
+        sent = 0
+
+        doses = (
+            db.query(MedicationCourseDose)
+            .filter(
+                MedicationCourseDose.scheduled_date == today,
+                MedicationCourseDose.status == "pending",
+            )
+            .all()
+        )
+
+        for d in doses:
+            if getattr(d, "patient_reminded", False):
+                continue
+            tstr = (d.scheduled_time or "08:00").strip()
+            try:
+                parts = tstr.split(":")
+                hh, mm = int(parts[0]), int(parts[1]) if len(parts) > 1 else 0
+                due = datetime.combine(today, datetime.min.time().replace(hour=hh, minute=mm))
+            except Exception:
+                continue
+
+            # Remind from window_minutes before until 5 minutes after scheduled time
+            delta_min = (due - now).total_seconds() / 60.0
+            if delta_min > window_minutes or delta_min < -5:
+                continue
+
+            admission = db.query(Admission).filter(Admission.id == d.admission_id).first()
+            if not admission:
+                continue
+            patient = db.query(Patient).filter(Patient.id == admission.patient_id).first()
+            if not patient:
+                continue
+
+            token = getattr(patient, "fcm_token", None)
+            if not token and getattr(patient, "user_id", None):
+                user = db.query(User).filter(User.id == patient.user_id).first()
+                token = getattr(user, "fcm_token", None) if user else None
+
+            item = d.item
+            med = item.medicine_name if item else "Medicine"
+            dosage = item.dosage if item else ""
+            body = f"Time for {med}" + (f" ({dosage})" if dosage else "") + f" at {tstr}. Please take your dose as prescribed."
+
+            if token:
+                try:
+                    send_notification(
+                        token=token,
+                        title="💊 Medicine reminder",
+                        body=body,
+                    )
+                    sent += 1
+                except Exception as e:
+                    logger.warning(f"Patient dose reminder failed: {e}")
+
+            try:
+                d.patient_reminded = True
+                db.add(d)
+                db.commit()
+            except Exception as e:
+                db.rollback()
+                logger.warning(f"Could not mark dose reminded: {e}")
+
+        return sent
+
+    def _notify_patient_of_course(self, db: Session, admission: Admission, course: MedicationCourse):
+        """Tell the patient a course was ordered and dose times will appear in their portal."""
+        from app.models.patient import Patient
+        from app.models.user import User
+        from app.services.firebase_service import send_notification
+        from app.core.logger import logger
+
+        patient = db.query(Patient).filter(Patient.id == admission.patient_id).first()
+        if not patient:
+            return
+        token = getattr(patient, "fcm_token", None)
+        if not token and getattr(patient, "user_id", None):
+            user = db.query(User).filter(User.id == patient.user_id).first()
+            token = getattr(user, "fcm_token", None) if user else None
+        if not token:
+            return
+        title = "💊 New medicine schedule"
+        body = (
+            f"Your doctor ordered "{course.title or 'a medication course'}" "
+            f"for {course.duration_days} day(s). Check My Admission & Medicines for dose times."
+        )
+        try:
+            send_notification(token=token, title=title, body=body)
+        except Exception as e:
+            logger.warning(f"Patient course notify failed: {e}")

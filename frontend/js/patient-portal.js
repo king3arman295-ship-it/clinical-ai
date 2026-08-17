@@ -860,8 +860,10 @@ async function loadMedicalRecords() {
 async function loadCareInfo() {
   await Promise.all([
     loadMyAdmission(),
+    loadMyTodayDoses(),
     loadMyPharmacyOrders()
   ]);
+  startPatientDoseReminderPoll();
 }
 
 const ADMISSION_STATUS_BADGE = {
@@ -1379,3 +1381,153 @@ async function refreshBillsBadge() {
 window.refreshBillsBadge = refreshBillsBadge;
 window.loadMyBills = loadMyBills;
 window.viewMyBill = viewMyBill;
+
+
+// ═════════════════════════════════════════════════════════════
+// Patient medication dose schedule + reminders
+// ═════════════════════════════════════════════════════════════
+let patientDosePollTimer = null;
+let patientDoseToastShown = {};
+
+async function loadMyTodayDoses() {
+  const el = document.getElementById('today-doses-list');
+  if (!el) return;
+  try {
+    let doses = [];
+    try {
+      const res = await API.get('/nursing/me/doses');
+      doses = Array.isArray(res) ? res : (res?.data || []);
+    } catch (e) {
+      doses = [];
+    }
+
+    // Also build schedule from recent OPD prescriptions (frequency × today)
+    try {
+      const user = Auth.getUser();
+      if (user?.patient_id) {
+        const timeline = await API.get(`/emr/patients/${user.patient_id}/timeline`).catch(() => null);
+        const prescriptions = timeline?.prescriptions || timeline?.data?.prescriptions || [];
+        const today = new Date();
+        prescriptions.slice(0, 15).forEach(p => {
+          (p.items || []).forEach(item => {
+            const times = estimateDoseTimes(item.frequency);
+            times.forEach(t => {
+              doses.push({
+                id: `rx-${p.id}-${item.medicine_name}-${t}`,
+                scheduled_time: t,
+                scheduled_date: today.toISOString().slice(0, 10),
+                status: 'pending',
+                medicine_name: item.medicine_name,
+                dosage: item.dosage,
+                frequency: item.frequency,
+                source: 'prescription',
+              });
+            });
+          });
+        });
+      }
+    } catch (_) {}
+
+    // Dedupe by medicine+time
+    const seen = new Set();
+    doses = doses.filter(d => {
+      const k = `${d.medicine_name}|${d.scheduled_time}|${d.scheduled_date || ''}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+    doses.sort((a, b) => String(a.scheduled_time || '').localeCompare(String(b.scheduled_time || '')));
+
+    if (!doses.length) {
+      el.innerHTML = '<p style="color:var(--text-light); text-align:center; padding:20px;">No doses scheduled for today. When your doctor orders a course or prescription, times will appear here.</p>';
+      return;
+    }
+
+    el.innerHTML = `<div class="table-responsive"><table class="table">
+      <thead><tr><th>Time</th><th>Medicine</th><th>Dosage</th><th>Status</th></tr></thead>
+      <tbody>
+        ${doses.map(d => {
+          const st = (d.status || 'pending').toLowerCase();
+          const badge = st === 'given' ? 'success' : st === 'pending' ? 'warning' : st === 'held' ? 'info' : 'danger';
+          return `<tr>
+            <td><strong>${Utils.escapeHtml(d.scheduled_time || '—')}</strong></td>
+            <td>${Utils.escapeHtml(d.medicine_name || '—')}
+              ${d.route ? `<span class="badge" style="margin-left:6px;">${Utils.escapeHtml(String(d.route).toUpperCase())}</span>` : ''}
+            </td>
+            <td>${Utils.escapeHtml(d.dosage || '—')}</td>
+            <td><span class="badge badge-${badge}">${Utils.escapeHtml(st)}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table></div>`;
+
+    // Keep for poller
+    window.__patientTodayDoses = doses;
+  } catch (e) {
+    console.error(e);
+    el.innerHTML = '<p style="color:var(--text-light); text-align:center; padding:20px;">Unable to load dose schedule</p>';
+  }
+}
+
+function estimateDoseTimes(frequency) {
+  const raw = String(frequency || '1').trim();
+  let timesPerDay = 1;
+  if (raw.includes('+')) {
+    timesPerDay = Math.max(1, raw.split('+').filter(p => p.trim() !== '').length);
+  } else if (/^\d+$/.test(raw)) {
+    timesPerDay = Math.max(1, parseInt(raw, 10));
+  } else {
+    const u = raw.toUpperCase();
+    if (/QID|QDS|FOUR/.test(u)) timesPerDay = 4;
+    else if (/TID|TDS|THRICE|THREE/.test(u)) timesPerDay = 3;
+    else if (/BD|BID|TWICE|TWO/.test(u)) timesPerDay = 2;
+    else timesPerDay = 1;
+  }
+  const defaults = {
+    1: ['08:00'],
+    2: ['08:00', '20:00'],
+    3: ['08:00', '14:00', '20:00'],
+    4: ['08:00', '12:00', '16:00', '20:00'],
+  };
+  return defaults[Math.min(4, timesPerDay)] || ['08:00'];
+}
+
+function startPatientDoseReminderPoll() {
+  if (patientDosePollTimer) clearInterval(patientDosePollTimer);
+  patientDosePollTimer = setInterval(checkPatientDoseReminders, 30000);
+  checkPatientDoseReminders();
+}
+
+function checkPatientDoseReminders() {
+  const doses = window.__patientTodayDoses || [];
+  if (!doses.length) return;
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+
+  doses.forEach(d => {
+    if ((d.status || 'pending').toLowerCase() !== 'pending') return;
+    const t = String(d.scheduled_time || '08:00');
+    const parts = t.split(':');
+    const dueMin = parseInt(parts[0], 10) * 60 + (parseInt(parts[1] || '0', 10));
+    const diff = dueMin - nowMin;
+    // within 10 min before or 5 min after
+    if (diff <= 10 && diff >= -5) {
+      const key = `${d.id || d.medicine_name}|${t}`;
+      if (patientDoseToastShown[key]) return;
+      patientDoseToastShown[key] = true;
+      const med = d.medicine_name || 'Medicine';
+      const dosage = d.dosage ? ` (${d.dosage})` : '';
+      Utils.showToast(`💊 Time for ${med}${dosage} — scheduled ${t}`, 'info');
+      // Browser notification if permitted
+      try {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+          new Notification('Medicine reminder', { body: `Time for ${med}${dosage} at ${t}` });
+        } else if (typeof Notification !== 'undefined' && Notification.permission !== 'denied') {
+          Notification.requestPermission();
+        }
+      } catch (_) {}
+    }
+  });
+}

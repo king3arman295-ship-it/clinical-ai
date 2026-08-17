@@ -536,6 +536,10 @@ class EMRService:
             f"Items={len(items)}"
         )
 
+        try:
+            self._notify_patient_prescription(db, created)
+        except Exception:
+            pass
         return ServiceResult.Success(
             "Prescription created successfully.",
             created,
@@ -1111,3 +1115,28 @@ class EMRService:
             "Patient timeline fetched successfully.",
             timeline,
         )
+
+    def _notify_patient_prescription(self, db, prescription):
+        from app.models.patient import Patient
+        from app.models.user import User
+        from app.services.firebase_service import send_notification
+        from app.core.logger import logger
+        patient = db.query(Patient).filter(Patient.id == prescription.patient_id).first()
+        if not patient:
+            return
+        token = getattr(patient, "fcm_token", None)
+        if not token and getattr(patient, "user_id", None):
+            user = db.query(User).filter(User.id == patient.user_id).first()
+            token = getattr(user, "fcm_token", None) if user else None
+        if not token:
+            return
+        items = list(getattr(prescription, "items", None) or [])
+        names = ", ".join((i.medicine_name for i in items[:3] if getattr(i, "medicine_name", None))) or "medicine"
+        try:
+            send_notification(
+                token=token,
+                title="💊 New prescription",
+                body=f"Your doctor prescribed: {names}. Check My Admission & Medicines for dose times.",
+            )
+        except Exception as e:
+            logger.warning(f"Patient prescription notify failed: {e}")

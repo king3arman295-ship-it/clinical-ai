@@ -182,3 +182,30 @@ def admission_compliance(
 ):
     result = service.admission_med_compliance(db, admission_id, day)
     return {"message": result.message, "data": result.data}
+
+
+@router.get("/me/doses")
+def my_today_doses(
+    day: date | None = Query(None),
+    db: Session = Depends(get_db),
+    current_user=Depends(require_roles("patient")),
+    service: NursingService = Depends(get_nursing_service),
+):
+    """Patient: today's medication dose schedule (ward course)."""
+    from app.models.patient import Patient
+    from app.models.user import User
+
+    uid = current_user.get("id")
+    patient = None
+    if uid:
+        patient = db.query(Patient).filter(Patient.user_id == int(uid)).first()
+    if not patient:
+        # fallback via patient_id claim
+        pid = current_user.get("patient_id")
+        if pid:
+            patient = db.query(Patient).filter(Patient.id == int(pid)).first()
+    if not patient:
+        return {"message": "Patient profile not found.", "data": []}
+
+    result = service.get_today_doses_for_patient(db, patient.id, day)
+    return {"message": result.message, "data": result.data}
