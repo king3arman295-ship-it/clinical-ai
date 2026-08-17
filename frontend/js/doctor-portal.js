@@ -2134,8 +2134,7 @@ function renderMyAdmissions(admissions) {
               <td style="display:flex; gap:6px; flex-wrap:wrap;">
                 <button class="btn btn-ghost btn-sm" onclick="viewAdmissionDetail(${a.id})">View</button>
                 ${(a.status === 'admitted' || a.status === 'pending') ? `<button class="btn btn-primary btn-sm" onclick="viewAdmissionDetail(${a.id})">Medication Course</button>` : ''}
-                ${a.status === 'admitted' ? `<button class="btn btn-danger btn-sm" onclick="quickDischargeAdmission(${a.id})">Discharge</button>` : ''}
-              </td>
+                              </td>
             </tr>
           `).join('')}
         </tbody>
@@ -2441,23 +2440,6 @@ async function submitDoctorDischarge() {
   }
 }
 
-async function quickDischargeAdmission(admissionId) {
-  const summary = prompt('Discharge summary (required):');
-  if (summary == null) return;
-  const text = String(summary).trim();
-  if (!text) {
-    Utils.showToast('Discharge summary is required', 'error');
-    return;
-  }
-  try {
-    await API.put(`/admissions/${admissionId}/discharge`, { discharge_summary: text });
-    Utils.showToast('Patient discharged and bed freed', 'success');
-    loadMyAdmissions();
-  } catch (error) {
-    console.error(error);
-    Utils.showToast(error.message || 'Failed to discharge', 'error');
-  }
-}
 
 
 async function viewLabReport(orderId) {
