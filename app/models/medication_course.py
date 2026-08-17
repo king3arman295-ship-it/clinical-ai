@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, (
+from sqlalchemy import (
+    Boolean,
     Column,
     Integer,
     String,
@@ -159,8 +160,8 @@ class MedicationCourseDose(Base):
 
     notes = Column(Text, nullable=True)
 
-    # True after patient received a push/in-app reminder for this dose time
-    patient_reminded = Column(Boolean, nullable=False, default=False, server_default='false')
+    # True after patient received a reminder for this dose time
+    patient_reminded = Column(Boolean, nullable=False, default=False, server_default="false")
 
     # Link to MAR stock-decrement log when given
     medication_administration_id = Column(
